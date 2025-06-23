@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to CTV Ad Monetization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: The application uses a non-linear, thematic structure with a sticky top navigation, allowing users (from executives to tech leads) to jump directly to sections relevant to their roles: 'Why?', 'Ecosystem', 'Ad Flow', 'Ad Servers', 'Key Rules', and 'Glossary'. This task-oriented design transforms the report into an exploratory tool, answering key business questions sequentially. It starts with high-level strategy (market drivers), moves to participants (interactive map), then to technical processes (visualized flow), technology choices (interactive comparison), and finally operational standards (key rules). This is more user-friendly and engaging than a simple linear document, facilitating better understanding and decision-making. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Market Drivers (Subscriber stats). Goal: Show proportions. Viz: Donut Chart. Interaction: Hover for tooltips. Justification: Visualizes part-to-whole data more effectively than text. Library: Chart.js/Canvas.
+        - Report Info: Ecosystem Players table. Goal: Organize/Explore. Viz: Interactive diagram (HTML/CSS Grid). Interaction: Click a player type to see details in a side panel. Justification: Creates an engaging, explorable map of a complex system. Library: Vanilla JS + Tailwind.
+        - Report Info: Ad Delivery Flow. Goal: Explain a process. Viz: Step-by-step visual diagram (HTML/CSS Flexbox). Interaction: Click step for details; toggle CSAI/SSAI to see process differences. Justification: Simplifies and clarifies a complex technical sequence. Library: Vanilla JS + Tailwind.
+        - Report Info: Ad Server Comparison table. Goal: Compare/Decide. Viz: Dynamic comparison table. Interaction: Use checkboxes to select which servers to compare side-by-side. Justification: Transforms a static table into an active decision-support tool. Library: Vanilla JS.
+        - Report Info: Glossary. Goal: Reference. Viz: Searchable list. Interaction: Real-time text input filters the list. Justification: Provides fast and efficient term lookup. Library: Vanilla JS.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #2563eb;
+            transform: translateY(-2px);
+        }
+        .section-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .tab-button.active {
+            border-color: #2563eb;
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+        .flow-step {
+            transition: all 0.3s ease;
+        }
+        .flow-step:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-900">CTV Ad Monetization Guide</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#why" class="nav-link text-gray-600 font-medium px-3 py-2 rounded-md text-sm">Why Ads?</a>
+                        <a href="#ecosystem" class="nav-link text-gray-600 font-medium px-3 py-2 rounded-md text-sm">Ecosystem</a>
+                        <a href="#flow" class="nav-link text-gray-600 font-medium px-3 py-2 rounded-md text-sm">Ad Flow</a>
+                        <a href="#servers" class="nav-link text-gray-600 font-medium px-3 py-2 rounded-md text-sm">Ad Servers</a>
+                        <a href="#rules" class="nav-link text-gray-600 font-medium px-3 py-2 rounded-md text-sm">Key Rules</a>
+                        <a href="#glossary" class="nav-link text-gray-600 font-medium px-3 py-2 rounded-md text-sm">Glossary</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <section id="intro" class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Navigating the Ad-Supported Future</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">This interactive guide translates the complex world of Connected TV (CTV) advertising into an explorable experience. Move beyond static text to dynamically compare technologies, visualize workflows, and understand the key players shaping the future of streaming. Use the navigation above or scroll to begin your journey from strategy to execution.</p>
+        </section>
+
+        <section id="why" class="section-card">
+            <h2 class="text-2xl font-bold text-center mb-2">Why Consider an Ad-Supported Model?</h2>
+            <p class="text-center text-gray-600 mb-8">The shift from pure subscription (SVOD) to hybrid models is driven by powerful market forces and consumer demands. This section explores the rationale behind this strategic pivot and the different ways to incorporate ads.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Key Drivers of Change</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 h-6 w-6 text-blue-600">➔</span>
+                            <div class="ml-2">
+                                <h4 class="font-semibold">Market Saturation & Fatigue</h4>
+                                <p class="text-gray-600">With households averaging 7.3 streaming apps, attracting and retaining subscribers is harder and more expensive than ever.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                             <span class="flex-shrink-0 h-6 w-6 text-blue-600">➔</span>
+                            <div class="ml-2">
+                                <h4 class="font-semibold">Consumer Demand for Value</h4>
+                                <p class="text-gray-600">Cost-conscious viewers are actively choosing lower-priced, ad-supported plans. These tiers now drive the majority of new subscriber growth for premium services.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                             <span class="flex-shrink-0 h-6 w-6 text-blue-600">➔</span>
+                            <div class="ml-2">
+                                <h4 class="font-semibold">The Dual-Revenue Imperative</h4>
+                                <p class="text-gray-600">Advertising adds a scalable revenue stream, often making total revenue per user higher on ad-supported plans than on ad-free tiers, ensuring greater financial resilience.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 text-center">Ad Tiers Drive Growth, Not Cannibalization</h3>
+                    <p class="text-center text-sm text-gray-500 mb-2">Analysis shows ad-supported plans primarily attract new customers or win back former subscribers.</p>
+                    <div class="chart-container">
+                        <canvas id="subscriberSourceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12">
+                <h3 class="text-xl font-semibold mb-6 text-center text-gray-800">Deconstructing Ad-Supported Models</h3>
+                <div class="flex justify-center mb-4 border-b">
+                    <button data-tab="avod" class="tab-button active flex-1 md:flex-none text-center p-4 border-b-2 font-medium">AVOD</button>
+                    <button data-tab="fast" class="tab-button flex-1 md:flex-none text-center p-4 border-b-2 font-medium">FAST</button>
+                    <button data-tab="hvod" class="tab-button flex-1 md:flex-none text-center p-4 border-b-2 font-medium">HVOD</button>
+                </div>
+                <div id="tab-content" class="p-4 bg-gray-50 rounded-lg">
+                </div>
+            </div>
+        </section>
+
+        <section id="ecosystem" class="section-card">
+            <h2 class="text-2xl font-bold text-center mb-2">The CTV Advertising Ecosystem</h2>
+            <p class="text-center text-gray-600 mb-8">Successful monetization requires navigating a complex landscape of technology vendors and media players. Click on a player type below to understand its role and see examples of companies in that space.</p>
+            <div class="lg:flex gap-6">
+                <div id="ecosystem-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-4 flex-grow"></div>
+                <div id="ecosystem-details" class="mt-6 lg:mt-0 lg:w-1/3 bg-blue-50 p-6 rounded-lg shadow-inner">
+                    <h3 class="font-bold text-lg text-blue-800">Select a Player</h3>
+                    <p class="text-blue-700">Click on a component in the diagram to learn about its function, key activities, and representative companies.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="flow" class="section-card">
+            <h2 class="text-2xl font-bold text-center mb-2">The Ad Delivery Flow: From Request to Render</h2>
+            <p class="text-center text-gray-600 mb-8">In milliseconds, a complex auction delivers a targeted ad to a viewer. This section visualizes that process and explains the critical technology choice between Client-Side (CSAI) and Server-Side (SSAI) Ad Insertion.</p>
+            <div id="ad-flow-container" class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-4 mb-8"></div>
+             <div class="mt-10 p-6 bg-gray-100 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4 text-center">CSAI vs. SSAI: A Critical Choice</h3>
+                <div class="flex justify-center mb-4">
+                    <div class="inline-flex rounded-md shadow-sm">
+                        <button id="ssai-btn" class="px-4 py-2 text-sm font-medium text-blue-700 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-blue-700">SSAI (Recommended)</button>
+                        <button id="csai-btn" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-r border-gray-200 rounded-r-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-blue-700">CSAI (Legacy)</button>
+                    </div>
+                </div>
+                <div id="ssai-csai-details" class="text-center max-w-2xl mx-auto"></div>
+            </div>
+        </section>
+
+        <section id="servers" class="section-card">
+            <h2 class="text-2xl font-bold text-center mb-2">Comparing CTV Ad Servers</h2>
+            <p class="text-center text-gray-600 mb-8">Choosing an ad server is a foundational decision for your monetization strategy. Use the controls below to compare the market leaders on key capabilities and find the best fit for your business goals.</p>
+            <div class="mb-6 bg-gray-100 p-4 rounded-lg">
+                <p class="font-semibold mb-2">Select Ad Servers to Compare:</p>
+                <div id="server-checkboxes" class="flex flex-wrap gap-4"></div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead id="server-comparison-head" class="bg-gray-50"></thead>
+                    <tbody id="server-comparison-body" class="bg-white divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+        </section>
+        
+        <section id="rules" class="section-card">
+            <h2 class="text-2xl font-bold text-center mb-2">Guardian of the Viewer Experience: Key Ad-Ops Rules</h2>
+             <p class="text-center text-gray-600 mb-8">A premium ad experience is not just about technology, but about the business rules you enforce. These core Ad-Ops configurations are essential for protecting brand equity and preventing viewer frustration.</p>
+            <div id="rules-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </section>
+        
+        <section id="glossary" class="section-card">
+            <h2 class="text-2xl font-bold text-center mb-2">CTV Glossary</h2>
+            <p class="text-center text-gray-600 mb-8">The world of CTV advertising is filled with acronyms and jargon. Use the search below to quickly find definitions for key terms.</p>
+            <input type="text" id="glossary-search" placeholder="Search for a term (e.g., VAST, SSAI)..." class="w-full p-3 border border-gray-300 rounded-lg mb-6 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <dl id="glossary-list" class="space-y-4"></dl>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto py-6 px-4 text-center text-sm">
+            <p>&copy; 2025 CTV Monetization Strategy Guide. This is an interactive application generated for informational purposes.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const data = {
+        subscriberSource: {
+            labels: ['New to Service', 'Win-Backs (Former Subs)', 'Downgrades (Existing Subs)'],
+            data: [65, 25, 11]
+        },
+        adModels: {
+            avod: { title: 'AVOD (Advertising-Based VOD)', content: 'Analogous to SVOD, but with ads. Users select specific content to watch on-demand. Ads are served pre-roll, mid-roll, or post-roll. Ideal for platforms with popular, binge-worthy content that users actively seek.', examples: 'Hulu, Peacock' },
+            fast: { title: 'FAST (Free Ad-Supported Streaming TV)', content: 'Mimics traditional linear TV with pre-programmed, continuously streaming channels navigated via a guide. A passive, "lean-back" experience. Excellent for monetizing large back-catalogs of older content into themed channels.', examples: 'Pluto TV, Tubi, Samsung TV Plus' },
+            hvod: { title: 'HVOD (Hybrid VOD)', content: 'The dominant model for major players. Combines SVOD and AVOD by offering a premium, ad-free tier alongside one or more lower-cost, ad-supported tiers. Maximizes audience reach and creates resilient, diverse revenue streams.', examples: 'Netflix, Disney+' }
+        },
+        ecosystem: [
+            { category: 'Buy-Side', type: 'Advertisers / Agencies', func: 'Fund the ecosystem by purchasing ad space to reach target audiences.', activities: 'Set campaign goals, define budgets, create ad content, measure ROI.', companies: 'Procter & Gamble, L\'Oréal, Omnicom' },
+            { category: 'Buy-Side Tech', type: 'Demand-Side Platform (DSP)', func: 'Enables advertisers to buy ad inventory programmatically from a single interface.', activities: 'Real-time bidding (RTB), audience targeting, campaign management, reporting.', companies: 'The Trade Desk, Google DV360, Amazon DSP' },
+            { category: 'Sell-Side', type: 'Publishers', func: 'Own the ad inventory and provide the content that attracts viewers.', activities: 'Create/license content, manage user experience, integrate ad tech.', companies: 'Your Service, Hulu, Peacock, Tubi' },
+            { category: 'Sell-Side Tech', type: 'Supply-Side Platform (SSP)', func: 'Enables publishers to sell ad inventory programmatically to a wide range of buyers.', activities: 'Inventory management, yield optimization, connecting to DSPs.', companies: 'Magnite, PubMatic, OpenX' },
+            { category: 'Marketplace', type: 'Ad Exchange', func: 'A neutral marketplace facilitating the buying and selling of inventory.', activities: 'Conducts real-time auctions to match buyers and sellers for each ad impression.', companies: 'Xandr, OpenX, Google Ad Exchange' },
+            { category: 'Core Infrastructure', type: 'Ad Server', func: 'The publisher\'s central system for managing, delivering, and reporting on ads.', activities: 'Stores creatives, enforces business rules, makes final ad selection, serves the ad.', companies: 'Google Ad Manager, FreeWheel, Publica' },
+            { category: 'Core Infrastructure', type: 'Data & Measurement', func: 'Provide data for targeting and tools for measuring campaign effectiveness.', activities: 'Offer audience segments, cross-device tracking, brand lift studies, fraud detection.', companies: 'Nielsen, LiveRamp, AppsFlyer' },
+            { category: 'Platform/OS', type: 'Device & OS Manufacturers', func: 'Control the hardware and OS, acting as gatekeepers to the viewer.', activities: 'Offer home screen ads, collect first-party user data, operate own FAST/AVOD apps.', companies: 'Roku, Amazon Fire TV, Samsung' },
+        ],
+        adFlow: [
+            { step: 1, title: 'Ad Request', description: 'User starts watching. The player hits a commercial break cue point and sends a data-rich ad request (content, user, device info) to the publisher\'s ad server.' },
+            { step: 2, title: 'Auction', description: 'The ad server passes the request to an SSP, which broadcasts it to DSPs via an ad exchange. DSPs analyze the request and bid in a real-time auction.' },
+            { step: 3, title: 'Winning Bid', description: 'Within milliseconds, the highest bidder wins. The winning bid and a pointer to the ad creative are sent back through the chain to the publisher\'s ad server.' },
+            { step: 4, title: 'Ad Insertion', description: 'The ad server receives the winning ad. Using SSAI, it stitches the ad and content into a single stream before sending it to the viewer for a seamless experience.' },
+        ],
+        ssaiCsai: {
+            ssai: { title: 'SSAI (Server-Side Ad Insertion)', benefits: 'Provides a smooth, broadcast-TV-like experience with no buffering. Bypasses ad blockers by stitching ads and content into one seamless stream on the server. The modern standard for premium CTV, ensuring high ad completion rates (avg. 98%).', drawbacks: 'Measurement can be more complex as the client device doesn\'t make the direct ad call. Incorporating real-time client signals can be challenging.' },
+            csai: { title: 'CSAI (Client-Side Ad Insertion)', benefits: 'Simpler measurement integration as the player makes the direct ad call.', drawbacks: 'Prone to buffering, latency, and a poor user experience. Highly vulnerable to ad-blocking software, leading to lost revenue. Inconsistent performance across devices. Not recommended for modern CTV.' }
+        },
+        adServers: [
+            { id: 'gam', name: 'Google Ad Manager', integration: 'Complex 3rd-party SSAI integration, relies on Google PAL SDK.', pod: 'Robust pod creation tools.', programmatic: 'Unrivaled access to Google AdX.', direct: 'Fully supported, but focus is programmatic.', usp: 'Unmatched scale and access to Google\'s massive advertising ecosystem.' },
+            { id: 'freewheel', name: 'FreeWheel', integration: 'Industry-leading SSAI for premium video, handling complex rights.', pod: 'Excels at complex pods with broadcast-like rules.', programmatic: 'Strong, but historically focused on large, direct-sold deals.', direct: 'Market leader for complex, direct-sold campaigns for major broadcasters.', usp: 'The gold standard for large media companies managing complex, direct-sold premium video.' },
+            { id: 'publica', name: 'Publica', integration: 'Purpose-built for SSAI with seamless integration.', pod: 'Advanced ad pod automation and slot-level bidding in a unified auction.', programmatic: 'Leader in programmatic yield optimization via its "unified auction".', direct: 'Supported, but focus is programmatic and auction dynamics.', usp: 'Advanced, programmatic-first unified auction to maximize yield for every impression.' },
+            { id: 'springserve', name: 'SpringServe', integration: 'Strong SSAI with an open architecture for flexible vendor integration.', pod: 'Comprehensive podding controls designed for video.', programmatic: 'Strong capabilities, including video header bidding.', direct: 'Supported with a flexible toolset to manage both demand types.', usp: 'Open, flexible, and independent video-native ad server that adapts to your tech stack.' }
+        ],
+        adServerFeatures: [
+            { key: 'integration', label: 'SSAI / DAI Integration' },
+            { key: 'pod', label: 'Ad Pod Management' },
+            { key: 'programmatic', label: 'Programmatic Capabilities' },
+            { key: 'direct', label: 'Direct-Sold Campaign Management' },
+            { key: 'usp', label: 'Unique Selling Proposition' },
+        ],
+        adRules: [
+            { title: 'Ad Pods', icon: '🎞️', description: 'A commercial break structured as a sequence of ads. Can be a fixed number of slots (e.g., four 30s ads) or a fixed duration (e.g., 120s) dynamically filled by the auction. The "first-in-pod" slot is the most valuable.' },
+            { title: 'Competitive Exclusion', icon: '🚫', description: 'A critical rule preventing ads from competing brands (e.g., Pepsi and Coca-Cola) from appearing in the same ad pod. This protects advertiser value and viewer experience.' },
+            { title: 'Frequency Capping', icon: '🔄', description: 'Limits how many times a single household sees the same ad in a given period (e.g., 3 times in 24 hours). This is essential to prevent viewer fatigue and the #1 ad complaint: repetition.' },
+            { title: 'Creative Deduplication', icon: '✨', description: 'A specific rule ensuring the exact same ad creative does not play more than once within a single ad pod. Prevents back-to-back identical ads.' }
+        ],
+        glossary: [
+            { term: 'AVOD (Advertising-Based Video on Demand)', definition: 'A streaming model where content is free or lower-priced, supported by advertising. Users select content on-demand.' },
+            { term: 'Ad Pod', definition: 'A sequence of multiple video ads played back-to-back within a single commercial break.' },
+            { term: 'CPM (Cost Per Mille)', definition: 'The cost an advertiser pays for one thousand views or impressions of an advertisement. The most common pricing model.' },
+            { term: 'CSAI (Client-Side Ad Insertion)', definition: 'An older ad insertion method where the user\'s device (client) requests and inserts ads. Prone to buffering and ad blockers.' },
+            { term: 'CTV (Connected TV)', definition: 'A television set connected to the internet, used for streaming. Includes smart TVs and TVs with devices like Roku or Apple TV.' },
+            { term: 'DAI (Dynamic Ad Insertion)', definition: 'Technology that allows for the real-time insertion of ads into a video stream. SSAI is a form of DAI.' },
+            { term: 'DSP (Demand-Side Platform)', definition: 'Software used by advertisers to buy ad inventory programmatically.' },
+            { term: 'FAST (Free Ad-Supported Streaming TV)', definition: 'A streaming model mimicking linear TV, with pre-scheduled, free, ad-supported channels.' },
+            { term: 'Frequency Capping', definition: 'A rule to limit how often an ad is shown to the same household over a period.' },
+            { term: 'PMP (Private Marketplace)', definition: 'An invitation-only programmatic auction where a publisher offers inventory to select advertisers.' },
+            { term: 'RTB (Real-Time Bidding)', definition: 'The process of buying and selling ad impressions through real-time auctions.' },
+            { term: 'SSAI (Server-Side Ad Insertion)', definition: 'The modern standard where ads are stitched into the content on a server *before* delivery, providing a seamless experience and bypassing ad blockers.' },
+            { term: 'SSP (Supply-Side Platform)', definition: 'Software used by publishers to sell their ad inventory programmatically.' },
+            { term: 'SVOD (Subscription Video on Demand)', definition: 'The traditional streaming model where users pay a recurring fee for unlimited, ad-free access.' },
+            { term: 'VAST (Video Ad Serving Template)', definition: 'The universal protocol that allows ad servers and video players to communicate, providing instructions for serving and tracking ads.' },
+            { term: 'Walled Garden', definition: 'A closed ecosystem (e.g., Roku, Amazon) where the platform provider controls the hardware, software, and data.' }
+        ]
+    };
+    
+    new Chart(document.getElementById('subscriberSourceChart'), {
+        type: 'doughnut',
+        data: {
+            labels: data.subscriberSource.labels,
+            datasets: [{
+                data: data.subscriberSource.data,
+                backgroundColor: ['#3b82f6', '#10b981', '#f97316'],
+                borderColor: '#f9fafb',
+                borderWidth: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 20 } },
+                tooltip: {
+                    callbacks: { label: (context) => `${context.label}: ${context.raw}%` }
+                }
+            }
+        }
+    });
+
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContent = document.getElementById('tab-content');
+    function updateTabContent(tabId) {
+        const model = data.adModels[tabId];
+        tabContent.innerHTML = `<h4 class="font-bold text-lg mb-2">${model.title}</h4><p class="mb-3">${model.content}</p><p class="text-sm font-semibold">Examples: <span class="font-normal">${model.examples}</span></p>`;
+        tabButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+    }
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => updateTabContent(button.dataset.tab));
+    });
+    updateTabContent('avod');
+
+    const ecosystemGrid = document.getElementById('ecosystem-grid');
+    const ecosystemDetails = document.getElementById('ecosystem-details');
+    data.ecosystem.forEach(player => {
+        const playerEl = document.createElement('div');
+        playerEl.className = 'p-4 bg-gray-100 rounded-lg cursor-pointer hover:bg-blue-100 hover:shadow-md transition-all duration-200 text-center';
+        playerEl.innerHTML = `<h4 class="font-semibold text-gray-800">${player.type}</h4><p class="text-sm text-gray-500">${player.category}</p>`;
+        playerEl.addEventListener('click', () => {
+            ecosystemDetails.innerHTML = `
+                <h3 class="font-bold text-lg text-blue-800 mb-2">${player.type}</h3>
+                <p class="text-sm text-blue-600 font-semibold mb-2">${player.category}</p>
+                <div class="space-y-3 text-sm">
+                    <div><strong class="text-blue-900">Function:</strong> <span class="text-gray-700">${player.func}</span></div>
+                    <div><strong class="text-blue-900">Activities:</strong> <span class="text-gray-700">${player.activities}</span></div>
+                    <div><strong class="text-blue-900">Examples:</strong> <span class="text-gray-700">${player.companies}</span></div>
+                </div>`;
+        });
+        ecosystemGrid.appendChild(playerEl);
+    });
+
+    const adFlowContainer = document.getElementById('ad-flow-container');
+    data.adFlow.forEach((item, index) => {
+        const stepEl = document.createElement('div');
+        stepEl.className = 'flow-step flex-1 p-4 bg-white border border-gray-200 rounded-lg shadow-sm text-center';
+        stepEl.innerHTML = `
+            <div class="flex items-center justify-center mx-auto h-12 w-12 rounded-full bg-blue-100 text-blue-600 font-bold text-lg mb-2">${item.step}</div>
+            <h4 class="font-semibold text-gray-800">${item.title}</h4>
+            <p class="text-sm text-gray-500 hidden md:block">${item.description}</p>`;
+        adFlowContainer.appendChild(stepEl);
+        if (index < data.adFlow.length - 1) {
+            const arrow = document.createElement('div');
+            arrow.className = 'text-2xl text-gray-400 font-light transform md:rotate-0 rotate-90';
+            arrow.innerHTML = `&rarr;`;
+            adFlowContainer.appendChild(arrow);
+        }
+    });
+
+    const ssaiBtn = document.getElementById('ssai-btn');
+    const csaiBtn = document.getElementById('csai-btn');
+    const ssaiCsaiDetails = document.getElementById('ssai-csai-details');
+    function updateSsaiCsai(type) {
+        const details = data.ssaiCsai[type];
+        ssaiCsaiDetails.innerHTML = `
+            <h4 class="font-semibold text-lg mb-2">${details.title}</h4>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="text-left"><strong class="text-green-600">Benefits:</strong> <span class="text-gray-600">${details.benefits}</span></div>
+                <div class="text-left"><strong class="text-red-600">Drawbacks:</strong> <span class="text-gray-600">${details.drawbacks}</span></div>
+            </div>`;
+        ssaiBtn.classList.toggle('bg-blue-100', type === 'ssai');
+        csaiBtn.classList.toggle('bg-blue-100', type === 'csai');
+    }
+    ssaiBtn.addEventListener('click', () => updateSsaiCsai('ssai'));
+    csaiBtn.addEventListener('click', () => updateSsaiCsai('csai'));
+    updateSsaiCsai('ssai');
+    
+    const serverCheckboxes = document.getElementById('server-checkboxes');
+    const serverComparisonHead = document.getElementById('server-comparison-head');
+    const serverComparisonBody = document.getElementById('server-comparison-body');
+    const selectedServers = new Set(['gam', 'publica']);
+
+    function renderServerComparison() {
+        serverComparisonHead.innerHTML = '';
+        serverComparisonBody.innerHTML = '';
+
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = '<th></th>';
+        const filteredServers = data.adServers.filter(s => selectedServers.has(s.id));
+        
+        filteredServers.forEach(server => {
+            const th = document.createElement('th');
+            th.scope = 'col';
+            th.className = 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+            th.textContent = server.name;
+            headerRow.appendChild(th);
+        });
+        serverComparisonHead.appendChild(headerRow);
+        
+        data.adServerFeatures.forEach(feature => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${feature.label}</td>`;
+            filteredServers.forEach(server => {
+                const td = document.createElement('td');
+                td.className = 'px-6 py-4 whitespace-normal text-sm text-gray-500';
+                td.textContent = server[feature.key];
+                row.appendChild(td);
+            });
+            serverComparisonBody.appendChild(row);
+        });
+    }
+
+    data.adServers.forEach(server => {
+        const label = document.createElement('label');
+        label.className = 'inline-flex items-center';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = server.id;
+        checkbox.className = 'h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500';
+        if (selectedServers.has(server.id)) {
+            checkbox.checked = true;
+        }
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                selectedServers.add(server.id);
+            } else {
+                selectedServers.delete(server.id);
+            }
+            renderServerComparison();
+        });
+        label.appendChild(checkbox);
+        label.append(` ${server.name}`);
+        serverCheckboxes.appendChild(label);
+    });
+    renderServerComparison();
+
+    const rulesGrid = document.getElementById('rules-grid');
+    data.adRules.forEach(rule => {
+        const ruleCard = document.createElement('div');
+        ruleCard.className = 'p-6 bg-gray-50 rounded-lg border border-gray-200';
+        ruleCard.innerHTML = `
+            <div class="text-4xl mb-3">${rule.icon}</div>
+            <h4 class="font-bold text-lg mb-2">${rule.title}</h4>
+            <p class="text-gray-600 text-sm">${rule.description}</p>`;
+        rulesGrid.appendChild(ruleCard);
+    });
+
+    const glossarySearch = document.getElementById('glossary-search');
+    const glossaryList = document.getElementById('glossary-list');
+    function renderGlossary(filter = '') {
+        glossaryList.innerHTML = '';
+        const filteredData = data.glossary.filter(item => item.term.toLowerCase().includes(filter.toLowerCase()));
+        if (filteredData.length === 0) {
+            glossaryList.innerHTML = `<p class="text-gray-500">No terms found.</p>`;
+            return;
+        }
+        filteredData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'bg-gray-100 p-4 rounded-lg';
+            div.innerHTML = `<dt class="font-semibold text-gray-900">${item.term}</dt><dd class="text-gray-600">${item.definition}</dd>`;
+            glossaryList.appendChild(div);
+        });
+    }
+    glossarySearch.addEventListener('input', (e) => renderGlossary(e.target.value));
+    renderGlossary();
+});
+</script>
+</body>
+</html>
